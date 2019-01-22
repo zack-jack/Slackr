@@ -8,11 +8,13 @@ import { setCurrentChannel } from '../../../actions/channel';
 class Channels extends Component {
   state = {
     user: this.props.currentUser,
+    activeChannel: '',
     channels: [],
     channelName: '',
     channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
     modalOpen: false,
+    initialLoad: true,
     errors: []
   };
 
@@ -20,18 +22,9 @@ class Channels extends Component {
     this.addListeners();
   }
 
-  addListeners = () => {
-    let loadedChannels = [];
-
-    // Firebase listens for child added
-    // Callback function adds new channel
-    this.state.channelsRef.on('child_added', snap => {
-      loadedChannels.push(snap.val());
-
-      // Set component state to the updated channels array
-      this.setState({ channels: loadedChannels });
-    });
-  };
+  componentWillUnmount() {
+    this.removeListeners();
+  }
 
   openModal = () => {
     this.setState({ modalOpen: true });
@@ -63,6 +56,26 @@ class Channels extends Component {
     if (this.isFormValid(this.state)) {
       this.addChannel();
     }
+  };
+
+  addListeners = () => {
+    let loadedChannels = [];
+
+    // Firebase listens for child added
+    // Callback function adds new channel
+    this.state.channelsRef.on('child_added', snap => {
+      loadedChannels.push(snap.val());
+
+      // Set component state to the updated channels array
+      this.setState({ channels: loadedChannels }, () => {
+        this.setInitialChannel();
+      });
+    });
+  };
+
+  removeListeners = () => {
+    // Stop listening to firebase changes to channels ref
+    this.state.channelsRef.off();
   };
 
   addChannel = () => {
@@ -98,6 +111,19 @@ class Channels extends Component {
       });
   };
 
+  setInitialChannel = () => {
+    const { channels, initialLoad } = this.state;
+    const initialChannel = channels[0];
+
+    // First page load and at least 1 channel exists
+    if (initialLoad && channels.length > 0) {
+      this.props.setCurrentChannel(initialChannel);
+      this.setActiveChannel(initialChannel);
+    }
+
+    this.setState({ initialLoad: false });
+  };
+
   displayChannels = channels => {
     // If channels array is not empty, map each channel
     channels.length > 0 &&
@@ -105,6 +131,7 @@ class Channels extends Component {
         <Menu.Item
           key={channel.id}
           name={channel.name}
+          active={channel.id === this.state.activeChannel}
           onClick={() => this.selectChannel()}
         >
           <Icon name="slack hash" />
@@ -114,8 +141,15 @@ class Channels extends Component {
   };
 
   selectChannel = channel => {
+    // Set active state
+    this.setActiveChannel(channel);
+
     // Add selected channel to redux store
     this.props.setCurrentChannel(channel);
+  };
+
+  setActiveChannel = channel => {
+    this.setState({ activeChannel: channel.id });
   };
 
   render() {
