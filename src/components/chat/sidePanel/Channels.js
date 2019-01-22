@@ -42,6 +42,10 @@ class Channels extends Component {
       error = { message: 'Please fill out all required fields' };
       this.setState({ errors: [...this.state.errors, error] });
     }
+
+    if (channelName && channelDetails) {
+      return true;
+    }
   };
 
   handleChange = e => {
@@ -124,7 +128,7 @@ class Channels extends Component {
     this.setState({ initialLoad: false });
   };
 
-  displayChannels = channels => {
+  renderChannels = channels => {
     // If channels array is not empty, map each channel
     channels.length > 0 &&
       channels.map(channel => (
@@ -153,7 +157,7 @@ class Channels extends Component {
   };
 
   render() {
-    const { channels, modalOpen } = this.state;
+    const { channels, channelName, channelDetails, modalOpen } = this.state;
 
     return (
       <>
@@ -166,7 +170,7 @@ class Channels extends Component {
             ({channels.length}) <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
 
-          {this.displayChannels(this.state.channels)}
+          {this.renderChannels(this.state.channels)}
         </Menu.Menu>
 
         <Modal basic open={modalOpen} onClose={this.closeModal}>
@@ -175,11 +179,23 @@ class Channels extends Component {
           <Modal.Content>
             <Form onSubmit={this.handleSubmit}>
               <Form.Field>
-                <Input fluid label="Channel Name" name="channelName" />
+                <Input
+                  fluid
+                  label="Channel Name"
+                  name="channelName"
+                  value={channelName}
+                  onChange={this.handleChange}
+                />
               </Form.Field>
 
               <Form.Field>
-                <Input fluid label="About the Channel" name="channelDetails" />
+                <Input
+                  fluid
+                  label="About the Channel"
+                  name="channelDetails"
+                  value={channelDetails}
+                  onChange={this.handleChange}
+                />
               </Form.Field>
             </Form>
           </Modal.Content>
