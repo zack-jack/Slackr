@@ -1,22 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 // Semantic UI styles
 import 'semantic-ui-css/semantic.min.css';
 
-// Components
-import App from './components/App';
-import Register from './components/auth/Register';
-import Login from './components/auth/Login';
+import App from './App';
 
 ReactDOM.render(
   <Router>
-    <Switch>
-      <Route path="/" exact component={App} />
-      <Route path="/register" component={Register} />
-      <Route path="/login" component={Login} />
-    </Switch>
+    <App />
   </Router>,
   document.getElementById('root')
 );
