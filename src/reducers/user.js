@@ -14,7 +14,7 @@ export default (state = INITIAL_STATE, action) => {
       };
     case CLEAR_USER:
       return {
-        ...INITIAL_STATE,
+        ...state,
         isLoading: false
       };
     default:

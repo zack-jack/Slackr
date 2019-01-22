@@ -25,7 +25,7 @@ const Chat = ({ currentUser }) => {
 };
 
 const mapStateToProps = state => ({
-  currentUser: state.auth.currentUser
+  currentUser: state.user.currentUser
 });
 
 export default connect(mapStateToProps)(Chat);

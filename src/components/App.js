@@ -9,7 +9,7 @@ import Login from './auth/Login';
 import Chat from './chat/Chat';
 import Spinner from './common/Spinner';
 
-import { setUser, clearUser } from '../actions/auth';
+import { setUser, clearUser } from '../actions/user';
 
 class App extends Component {
   componentDidMount() {
@@ -44,7 +44,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  isLoading: state.auth.isLoading
+  isLoading: state.user.isLoading
 });
 
 export default withRouter(
