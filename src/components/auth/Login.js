@@ -9,7 +9,6 @@ import {
   Message,
   Icon
 } from 'semantic-ui-react';
-import md5 from 'md5';
 
 import firebase from '../../firebase/firebase';
 
@@ -56,8 +55,6 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(signedInUser => {
-          console.log(signedInUser);
-
           this.setState({ isSubmitting: false });
         })
         .catch(err => {
