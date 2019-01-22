@@ -31,6 +31,8 @@ class Login extends Component {
       this.setState({ errors });
 
       return false;
+    } else {
+      return true;
     }
   };
 

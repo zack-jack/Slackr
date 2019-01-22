@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
-import firebase from './firebase/firebase';
+import firebase from '../firebase/firebase';
 
-import Welcome from './components/Welcome';
-import Register from './components/auth/Register';
-import Login from './components/auth/Login';
-import Dashboard from './components/Dashboard';
-import Spinner from './components/common/Spinner';
+import Welcome from './Welcome';
+import Register from './auth/Register';
+import Login from './auth/Login';
+import Chat from './chat/Chat';
+import Spinner from './common/Spinner';
 
-import { setUser } from './actions/auth';
+import { setUser, clearUser } from '../actions/auth';
 
 class App extends Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
+        // Add current user data to the redux store
         this.props.setUser(user);
-        this.props.history.push('/dashboard');
+
+        // Redirect to the chat
+        this.props.history.push('/slackr');
+      } else {
+        this.props.history.push('/');
+
+        // Remove user data from redux store
+        this.props.clearUser();
       }
     });
   }
@@ -29,7 +37,7 @@ class App extends Component {
         <Route path="/" exact component={Welcome} />
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
-        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/slackr" component={Chat} />
       </Switch>
     );
   }
@@ -42,6 +50,6 @@ const mapStateToProps = state => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    { setUser }
+    { setUser, clearUser }
   )(App)
 );

@@ -8,7 +8,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 // Semantic UI styles
 import 'semantic-ui-css/semantic.min.css';
 
-import App from './App';
+import App from './components/App';
 
 import rootReducer from './reducers/index';
 
