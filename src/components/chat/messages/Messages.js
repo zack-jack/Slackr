@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Comment } from 'semantic-ui-react';
+import { Segment, Comment, Icon } from 'semantic-ui-react';
 
 import firebase from '../../../firebase/firebase';
 
@@ -13,7 +13,9 @@ class Messages extends Component {
     messagesRef: firebase.database().ref('messages'),
     channel: this.props.currentChannel,
     user: this.props.currentUser,
-    messagesLoading: true
+    messagesLoading: true,
+    numUniqueUsers: '',
+    progressBar: false
   };
 
   componentDidMount() {
@@ -46,7 +48,34 @@ class Messages extends Component {
         messages: loadedMessages,
         messagesLoading: false
       });
+
+      // Sum active users in current channel
+      this.countUniqueUsers(loadedMessages);
     });
+  };
+
+  isProgressBarVisible = percent => {
+    if (percent > 0) {
+      this.setState({ progressBar: true });
+    }
+  };
+
+  countUniqueUsers = messages => {
+    const uniqueUsers = messages.reduce((accumulator, message) => {
+      // If the message owner (user) isn't already in the accumulator
+      // then add it to the accumulator
+      if (!accumulator.includes(message.user.name)) {
+        accumulator.push(message.user.name);
+      }
+
+      return accumulator;
+    }, []);
+
+    const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0;
+
+    const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
+
+    this.setState({ numUniqueUsers });
   };
 
   renderMessages = messages => {
@@ -61,21 +90,47 @@ class Messages extends Component {
     }
   };
 
+  displayCurrentChannelName = channel => {
+    return channel ? (
+      <>
+        <Icon name="slack hash" color="black" />
+        {channel.name}
+      </>
+    ) : (
+      ''
+    );
+  };
+
   render() {
-    const { messagesRef, messages, channel, user } = this.state;
+    const {
+      messagesRef,
+      messages,
+      channel,
+      user,
+      numUniqueUsers,
+      progressBar
+    } = this.state;
 
     return (
       <>
-        <MessagesHeader />
+        <MessagesHeader
+          channelName={this.displayCurrentChannelName(channel)}
+          numUniqueUsers={numUniqueUsers}
+        />
 
         <Segment>
-          <Comment.Group>{this.renderMessages(messages)}</Comment.Group>
+          <Comment.Group
+            className={progressBar ? 'messages__progress' : 'messages'}
+          >
+            {this.renderMessages(messages)}
+          </Comment.Group>
         </Segment>
 
         <MessageForm
           messagesRef={messagesRef}
           currentChannel={channel}
           currentUser={user}
+          isProgressBarVisible={this.isProgressBarVisible}
         />
       </>
     );
