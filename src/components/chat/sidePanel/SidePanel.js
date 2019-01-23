@@ -7,13 +7,16 @@ import DirectMessages from './DirectMessages';
 
 class SidePanel extends Component {
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, currentChannel } = this.props;
 
     return (
       <Menu size="large" inverted fixed="left" vertical>
         <UserPanel currentUser={currentUser} />
-        <Channels currentUser={currentUser} />
-        <DirectMessages currentUser={currentUser} />
+        <Channels currentUser={currentUser} currentChannel={currentChannel} />
+        <DirectMessages
+          currentUser={currentUser}
+          currentChannel={currentChannel}
+        />
       </Menu>
     );
   }

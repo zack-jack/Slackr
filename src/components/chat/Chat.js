@@ -15,6 +15,7 @@ const Chat = ({ currentUser, currentChannel, isPrivateChannel }) => {
         <SidePanel
           key={currentUser && currentUser.id}
           currentUser={currentUser}
+          currentChannel={currentChannel}
         />
       </Grid.Column>
 
