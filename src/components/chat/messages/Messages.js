@@ -15,6 +15,9 @@ class Messages extends Component {
     user: this.props.currentUser,
     messagesLoading: true,
     numUniqueUsers: '',
+    searchTerm: '',
+    searchResults: [],
+    searchLoading: false,
     progressBar: false
   };
 
@@ -54,12 +57,6 @@ class Messages extends Component {
     });
   };
 
-  isProgressBarVisible = percent => {
-    if (percent > 0) {
-      this.setState({ progressBar: true });
-    }
-  };
-
   countUniqueUsers = messages => {
     const uniqueUsers = messages.reduce((accumulator, message) => {
       // If the message owner (user) isn't already in the accumulator
@@ -76,6 +73,50 @@ class Messages extends Component {
     const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
 
     this.setState({ numUniqueUsers });
+  };
+
+  handleSearchChange = e => {
+    this.setState(
+      {
+        searchTerm: e.target.value,
+        searchLoading: true
+      },
+      () => {
+        // Filter through messages array with search term
+        this.handleSearchMessages();
+      }
+    );
+  };
+
+  handleSearchMessages = () => {
+    const { messages, searchTerm } = this.state;
+    const channelMessages = [...messages];
+    const regex = new RegExp(searchTerm, 'gi');
+
+    // Loop through messages for the channel and compare search terms
+    const searchResults = channelMessages.reduce((accumulator, message) => {
+      // Check that message is text not image
+      // Match message content against regex
+      if (
+        (message.content && message.content.match(regex)) ||
+        message.user.name.match(regex)
+      ) {
+        // Message matches searchterm
+        // Add message to accumulator
+        accumulator.push(message);
+      }
+
+      return accumulator;
+    }, []);
+
+    this.setState({ searchResults });
+    setTimeout(() => this.setState({ searchLoading: false }), 1000);
+  };
+
+  isProgressBarVisible = percent => {
+    if (percent > 0) {
+      this.setState({ progressBar: true });
+    }
   };
 
   renderMessages = messages => {
@@ -108,6 +149,9 @@ class Messages extends Component {
       channel,
       user,
       numUniqueUsers,
+      searchTerm,
+      searchResults,
+      searchLoading,
       progressBar
     } = this.state;
 
@@ -116,13 +160,17 @@ class Messages extends Component {
         <MessagesHeader
           channelName={this.displayCurrentChannelName(channel)}
           numUniqueUsers={numUniqueUsers}
+          handleSearchChange={this.handleSearchChange}
+          searchLoading={searchLoading}
         />
 
         <Segment>
           <Comment.Group
             className={progressBar ? 'messages__progress' : 'messages'}
           >
-            {this.renderMessages(messages)}
+            {searchTerm
+              ? this.renderMessages(searchResults)
+              : this.renderMessages(messages)}
           </Comment.Group>
         </Segment>
 
