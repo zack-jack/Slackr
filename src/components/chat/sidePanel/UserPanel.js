@@ -1,43 +1,61 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Grid, Header, Icon, Dropdown, Image } from 'semantic-ui-react';
+
 import firebase from 'firebase';
+import { clearUser } from '../../../actions/user';
 
 class UserPanel extends Component {
   state = {
     user: this.props.currentUser
   };
 
-  dropdownOptions = () => [
-    {
-      key: 'user',
-      text: (
-        <span>
-          Signed in as <strong>{this.state.user.displayName}</strong>
-        </span>
-      ),
-      disabled: true
-    },
-    {
-      key: 'avatar',
-      text: <span>Change Avatar</span>
-    },
-    {
-      key: 'sign out',
-      text: <span onClick={this.handleSignOut}>Sign Out</span>
+  onChange = e => {
+    const selectedText = e.target.innerText;
+
+    if (selectedText === 'Sign Out') {
+      this.handleSignOut();
     }
-  ];
+  };
 
   handleSignOut = () => {
     firebase
       .auth()
       .signOut()
       .then(() => {
-        console.log('signed out');
+        this.props.clearUser();
       });
   };
 
   render() {
     const { user } = this.state;
+
+    const trigger = (
+      <span>
+        <Image src={user.photoURL} spaced="right" avatar />
+        {user.displayName}
+      </span>
+    );
+
+    const options = [
+      {
+        key: 'user',
+        text: (
+          <span>
+            Signed in as <strong>{user.displayName}</strong>
+          </span>
+        ),
+        disabled: true
+      },
+      {
+        key: 'changeAvatar',
+        text: 'Change Avatar'
+      },
+      {
+        key: 'signOut',
+        text: 'Sign Out'
+      }
+    ];
 
     return (
       <Grid>
@@ -50,13 +68,9 @@ class UserPanel extends Component {
 
             <Header inverted as="h4">
               <Dropdown
-                trigger={
-                  <span>
-                    <Image src={user.photoURL} spaced="right" avatar />
-                    {user.displayName}
-                  </span>
-                }
-                options={this.dropdownOptions()}
+                trigger={trigger}
+                options={options}
+                onChange={this.onChange}
               />
             </Header>
           </Grid.Row>
@@ -66,4 +80,7 @@ class UserPanel extends Component {
   }
 }
 
-export default UserPanel;
+export default connect(
+  null,
+  { clearUser }
+)(UserPanel);

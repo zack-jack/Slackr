@@ -128,22 +128,6 @@ class Channels extends Component {
     this.setState({ initialLoad: false });
   };
 
-  renderChannels = channels => {
-    // If channels array is not empty, map each channel
-    channels.length > 0 &&
-      channels.map(channel => (
-        <Menu.Item
-          key={channel.id}
-          name={channel.name}
-          active={channel.id === this.state.activeChannel}
-          onClick={() => this.selectChannel()}
-        >
-          <Icon name="slack hash" />
-          {channel.name}
-        </Menu.Item>
-      ));
-  };
-
   selectChannel = channel => {
     // Set active state
     this.setActiveChannel(channel);
@@ -154,6 +138,27 @@ class Channels extends Component {
 
   setActiveChannel = channel => {
     this.setState({ activeChannel: channel.id });
+  };
+
+  renderChannels = channels => {
+    // If channels array is not empty, map each channel
+    if (channels.length > 0) {
+      return channels.map(channel => {
+        return (
+          <Menu.Item
+            key={channel.id}
+            name={channel.name}
+            active={channel.id === this.state.activeChannel}
+            onClick={() => this.selectChannel(channel)}
+          >
+            <span>
+              <Icon name="slack hash" />
+            </span>
+            {channel.name}
+          </Menu.Item>
+        );
+      });
+    }
   };
 
   render() {
@@ -173,7 +178,7 @@ class Channels extends Component {
           {this.renderChannels(this.state.channels)}
         </Menu.Menu>
 
-        <Modal basic open={modalOpen} onClose={this.closeModal}>
+        <Modal open={modalOpen} onClose={this.closeModal}>
           <Modal.Header>Add a channel</Modal.Header>
 
           <Modal.Content>
@@ -201,11 +206,11 @@ class Channels extends Component {
           </Modal.Content>
 
           <Modal.Actions>
-            <Button color="teal" inverted onClick={this.handleSubmit}>
+            <Button color="teal" onClick={this.handleSubmit}>
               <Icon name="checkmark" /> Add
             </Button>
 
-            <Button color="red" inverted onClick={this.closeModal}>
+            <Button color="red" onClick={this.closeModal}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>

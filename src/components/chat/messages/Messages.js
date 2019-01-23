@@ -55,7 +55,7 @@ class Messages extends Component {
     // Check that at least 1 message exists
     if (messages.length > 0) {
       // Loop through messages and map each message
-      messages.map(message => (
+      return messages.map(message => (
         <Message key={message.timestamp} message={message} user={user} />
       ));
     }
