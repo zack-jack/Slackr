@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import firebase from '../../../firebase/firebase';
 import { Menu, Icon, Modal, Form, Input, Button } from 'semantic-ui-react';
 
-import { setCurrentChannel } from '../../../actions/channel';
+import { setCurrentChannel, setPrivateChannel } from '../../../actions/channel';
 
 class Channels extends Component {
   state = {
@@ -134,6 +134,9 @@ class Channels extends Component {
 
     // Add selected channel to redux store
     this.props.setCurrentChannel(channel);
+
+    // Set private channel to false in redux
+    this.props.setPrivateChannel(false);
   };
 
   setActiveChannel = channel => {
@@ -222,5 +225,5 @@ class Channels extends Component {
 
 export default connect(
   null,
-  { setCurrentChannel }
+  { setCurrentChannel, setPrivateChannel }
 )(Channels);

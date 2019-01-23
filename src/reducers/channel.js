@@ -1,7 +1,8 @@
-import { SET_CURRENT_CHANNEL } from '../actions/types';
+import { SET_CURRENT_CHANNEL, SET_PRIVATE_CHANNEL } from '../actions/types';
 
 const INITIAL_STATE = {
-  currentChannel: null
+  currentChannel: null,
+  isPrivateChannel: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -10,6 +11,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         currentChannel: action.payload.currentChannel
+      };
+    case SET_PRIVATE_CHANNEL:
+      return {
+        ...state,
+        isPrivateChannel: action.payload.isPrivateChannel
       };
     default:
       return state;

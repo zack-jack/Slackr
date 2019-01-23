@@ -12,6 +12,8 @@ class Messages extends Component {
     messages: [],
     messagesRef: firebase.database().ref('messages'),
     channel: this.props.currentChannel,
+    isPrivateChannel: this.props.isPrivateChannel,
+    privateMessagesRef: firebase.database().ref('privateMessages'),
     user: this.props.currentUser,
     messagesLoading: true,
     numUniqueUsers: '',
@@ -38,11 +40,11 @@ class Messages extends Component {
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    const { messagesRef } = this.state;
+    const ref = this.getMessagesRef();
 
     // Listen for new messages being added to firebase for this
     // channel id
-    messagesRef.child(channelId).on('child_added', snap => {
+    ref.child(channelId).on('child_added', snap => {
       // Add new message value to loaded messages
       loadedMessages.push(snap.val());
 
@@ -55,6 +57,12 @@ class Messages extends Component {
       // Sum active users in current channel
       this.countUniqueUsers(loadedMessages);
     });
+  };
+
+  getMessagesRef = () => {
+    const { messagesRef, privateMessagesRef, isPrivateChannel } = this.state;
+
+    return isPrivateChannel ? privateMessagesRef : messagesRef;
   };
 
   countUniqueUsers = messages => {
@@ -132,14 +140,27 @@ class Messages extends Component {
   };
 
   displayCurrentChannelName = channel => {
-    return channel ? (
-      <>
-        <Icon name="slack hash" color="black" />
-        {channel.name}
-      </>
-    ) : (
-      ''
-    );
+    if (channel) {
+      const { isPrivateChannel } = this.state;
+
+      if (isPrivateChannel) {
+        return (
+          <>
+            <Icon name="at" color="black" />
+            {channel.name}
+          </>
+        );
+      } else {
+        return (
+          <>
+            <Icon name="slack hash" color="black" />
+            {channel.name}
+          </>
+        );
+      }
+    } else {
+      return '';
+    }
   };
 
   render() {
@@ -147,6 +168,7 @@ class Messages extends Component {
       messagesRef,
       messages,
       channel,
+      isPrivateChannel,
       user,
       numUniqueUsers,
       searchTerm,
@@ -159,6 +181,7 @@ class Messages extends Component {
       <>
         <MessagesHeader
           channelName={this.displayCurrentChannelName(channel)}
+          isPrivateChannel={isPrivateChannel}
           numUniqueUsers={numUniqueUsers}
           handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
@@ -176,7 +199,9 @@ class Messages extends Component {
 
         <MessageForm
           messagesRef={messagesRef}
+          getMessagesRef={this.getMessagesRef}
           currentChannel={channel}
+          isPrivateChannel={isPrivateChannel}
           currentUser={user}
           isProgressBarVisible={this.isProgressBarVisible}
         />

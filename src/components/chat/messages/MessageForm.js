@@ -58,14 +58,15 @@ class MessageForm extends Component {
   };
 
   sendMessage = () => {
-    const { messagesRef } = this.props;
+    const { getMessagesRef } = this.props;
     const { message, channel } = this.state;
+    const ref = getMessagesRef();
 
     if (message) {
       this.setState({ isSending: true });
 
       // Set message in firebase ref for this channel
-      messagesRef
+      ref
         .child(channel.id)
         .push()
         .set(this.createMessage())
@@ -98,12 +99,20 @@ class MessageForm extends Component {
     }
   };
 
+  getFilePath = () => {
+    if (this.props.isPrivateChannel) {
+      return `chat/private-${this.state.channel.id}`;
+    } else {
+      return `chat/public`;
+    }
+  };
+
   uploadFile = (file, metadata) => {
     const { storageRef } = this.state;
     const pathToUpload = this.state.channel.id;
-    const ref = this.props.messagesRef;
+    const ref = this.props.getMessagesRef();
     const extension = file.type.split('/')[1];
-    const filePath = `chat/public/${uuidv4()}.${extension}`;
+    const filePath = `${this.getFilePath()}/${uuidv4()}.${extension}`;
 
     this.setState(
       {
