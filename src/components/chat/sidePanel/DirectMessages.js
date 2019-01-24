@@ -132,7 +132,7 @@ class DirectMessages extends Component {
     const { users, activeChannel } = this.state;
 
     return (
-      <Menu.Menu>
+      <Menu.Menu className="menu">
         <Menu.Item>
           <span>
             <Icon name="mail" />
@@ -144,6 +144,7 @@ class DirectMessages extends Component {
           <Menu.Item
             key={user.uid}
             active={user.uid === activeChannel}
+            style={{ opacity: 0.6, fontStyle: 'italic' }}
             onClick={() => this.changeChannel(user)}
           >
             <Icon

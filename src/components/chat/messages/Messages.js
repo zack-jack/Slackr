@@ -295,7 +295,8 @@ class Messages extends Component {
 
         <Segment>
           <Comment.Group
-            className={progressBar ? 'messages__progress' : 'messages'}
+            style={{ maxWidth: '100%' }}
+            className={progressBar ? 'loading' : 'messages'}
           >
             {searchTerm
               ? this.renderMessages(searchResults)

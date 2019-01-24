@@ -195,8 +195,8 @@ class MessageForm extends Component {
     } = this.state;
 
     return (
-      <Segment>
-        <Form onSubmit={this.sendMessage}>
+      <Segment className="message__form">
+        <Form style={{ marginBottom: '1rem' }} onSubmit={this.sendMessage}>
           <Input
             fluid
             name="message"

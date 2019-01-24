@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Input, Button, Icon } from 'semantic-ui-react';
+import { Modal, Input, Button, Icon, Label } from 'semantic-ui-react';
 
 class MediaModal extends Component {
   state = {
@@ -74,7 +74,10 @@ class MediaModal extends Component {
         <Modal.Header>Select an Image File</Modal.Header>
 
         <Modal.Content>
-          File type: .jpeg or .png
+          <Label
+            content="File type: .jpeg or .png"
+            style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}
+          />
           <Input
             fluid
             name="file"

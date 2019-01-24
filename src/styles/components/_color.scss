@@ -1,0 +1,21 @@
+.color {
+  &__container {
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    width: 3rem;
+  }
+
+  &__square {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  &__overlay {
+    height: 3rem;
+    width: 7.25rem;
+    transform: rotate(225deg);
+  }
+}

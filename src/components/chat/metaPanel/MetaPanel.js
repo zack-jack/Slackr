@@ -61,11 +61,9 @@ class MetaPanel extends Component {
     }
 
     return (
-      <Segment loading={!channel}>
+      <Segment loading={!channel} className="meta-panel">
         <Header as="h3" attached="top">
-          About
-          <Icon name="slack hash" />
-          {channel && channel.name}
+          About #{channel && channel.name}
         </Header>
 
         <Accordion styled attached="true">

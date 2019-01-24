@@ -29,6 +29,7 @@ class UserPanel extends Component {
 
   render() {
     const { user } = this.state;
+    const { primaryColor } = this.props;
 
     const trigger = (
       <span>
@@ -58,15 +59,20 @@ class UserPanel extends Component {
     ];
 
     return (
-      <Grid>
+      <Grid style={{ background: primaryColor }}>
         <Grid.Column>
-          <Grid.Row>
-            <Header inverted floated="left" as="h2">
+          <Grid.Row style={{ padding: '1rem 0 1rem 1rem', margin: 0 }}>
+            <Header
+              inverted
+              floated="left"
+              as="h2"
+              style={{ marginBottom: '2rem' }}
+            >
               <Icon name="slack hash" />
               <Header.Content>Slackr</Header.Content>
             </Header>
 
-            <Header inverted as="h4">
+            <Header inverted as="h4" style={{ padding: '0.2rem' }}>
               <Dropdown
                 trigger={trigger}
                 options={options}

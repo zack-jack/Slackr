@@ -11,16 +11,26 @@ const Chat = ({
   currentUser,
   currentChannel,
   isPrivateChannel,
-  userMessages
+  userMessages,
+  primaryColor,
+  secondaryColor
 }) => {
   return (
-    <Grid columns="equal" className="app">
-      <Grid.Column>
-        <ColorPanel />
+    <Grid
+      columns="equal"
+      className="app"
+      style={{ background: secondaryColor }}
+    >
+      <Grid.Column width={3}>
+        <ColorPanel
+          key={currentUser && currentUser.name}
+          currentUser={currentUser}
+        />
         <SidePanel
           key={currentUser && currentUser.id}
           currentUser={currentUser}
           currentChannel={currentChannel}
+          primaryColor={primaryColor}
         />
       </Grid.Column>
 
@@ -35,7 +45,7 @@ const Chat = ({
 
       <Grid.Column width={4}>
         <MetaPanel
-          key={currentChannel && currentChannel.id}
+          key={currentChannel && currentChannel.name}
           userMessages={userMessages}
           currentChannel={currentChannel}
           isPrivateChannel={isPrivateChannel}
@@ -49,7 +59,9 @@ const mapStateToProps = state => ({
   currentUser: state.user.currentUser,
   currentChannel: state.channel.currentChannel,
   isPrivateChannel: state.channel.isPrivateChannel,
-  userMessages: state.channel.userMessages
+  userMessages: state.channel.userMessages,
+  primaryColor: state.colors.primaryColor,
+  secondaryColor: state.colors.secondaryColor
 });
 
 export default connect(mapStateToProps)(Chat);

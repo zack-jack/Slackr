@@ -102,6 +102,7 @@ class Favorites extends Component {
             key={channel.id}
             name={channel.name}
             active={channel.id === this.state.activeChannel}
+            style={{ opacity: 0.6 }}
             onClick={() => this.selectChannel(channel)}
           >
             <span>

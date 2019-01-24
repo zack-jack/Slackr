@@ -1,0 +1,14 @@
+.message {
+  &__self {
+    border-left: 2px solid orange;
+    padding-left: 0.5rem;
+  }
+
+  &__image {
+    padding: 1rem;
+  }
+
+  &__form {
+    z-index: 500;
+  }
+}

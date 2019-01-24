@@ -81,7 +81,11 @@ class Register extends Component {
 
   displayErrors = errors => {
     return errors.map((error, i) => {
-      return <p key={i}>{error.message}</p>;
+      return (
+        <p key={i} className="error">
+          {error.message}
+        </p>
+      );
     });
   };
 
@@ -150,7 +154,7 @@ class Register extends Component {
     } = this.state;
 
     return (
-      <Grid textAlign="center" verticalAlign="middle">
+      <Grid textAlign="center" verticalAlign="middle" className="register app">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h2" icon color="orange" textAlign="center">
             <Icon name="slack hash" color="orange" />

@@ -8,11 +8,18 @@ import DirectMessages from './DirectMessages';
 
 class SidePanel extends Component {
   render() {
-    const { currentUser, currentChannel } = this.props;
+    const { currentUser, currentChannel, primaryColor } = this.props;
 
     return (
-      <Menu size="large" inverted fixed="left" vertical>
-        <UserPanel currentUser={currentUser} />
+      <Menu
+        size="large"
+        inverted
+        fixed="left"
+        vertical
+        style={{ background: primaryColor, fontSize: '1.2rem' }}
+        className="side-panel"
+      >
+        <UserPanel currentUser={currentUser} primaryColor={primaryColor} />
         <Favorites currentUser={currentUser} />
         <Channels currentUser={currentUser} currentChannel={currentChannel} />
         <DirectMessages

@@ -251,6 +251,7 @@ class Channels extends Component {
             key={channel.id}
             name={channel.name}
             active={channel.id === this.state.activeChannel}
+            style={{ opacity: 0.6 }}
             onClick={() => this.selectChannel(channel)}
           >
             {this.getNotificationCount(channel) && (
@@ -271,7 +272,7 @@ class Channels extends Component {
 
     return (
       <>
-        <Menu.Menu>
+        <Menu.Menu className="menu">
           <Menu.Item>
             <span>
               <Icon name="exchange" />

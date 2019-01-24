@@ -15,7 +15,7 @@ class MessagesHeader extends Component {
 
     return (
       <Segment clearing>
-        <Header fluid="true" as="h2" floated="left">
+        <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
           <span>
             {channelName}
             {!isPrivateChannel && (
@@ -23,6 +23,7 @@ class MessagesHeader extends Component {
                 name={isChannelFavorited ? 'star' : 'star outline'}
                 color={isChannelFavorited ? 'yellow' : 'black'}
                 onClick={handleFavorite}
+                style={{ marginLeft: '0.5rem' }}
               />
             )}
           </span>
