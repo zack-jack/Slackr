@@ -1,8 +1,13 @@
-import { SET_CURRENT_CHANNEL, SET_PRIVATE_CHANNEL } from '../actions/types';
+import {
+  SET_CURRENT_CHANNEL,
+  SET_PRIVATE_CHANNEL,
+  SET_USER_MESSAGES
+} from '../actions/types';
 
 const INITIAL_STATE = {
   currentChannel: null,
-  isPrivateChannel: false
+  isPrivateChannel: false,
+  userMessages: null
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -16,6 +21,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isPrivateChannel: action.payload.isPrivateChannel
+      };
+    case SET_USER_MESSAGES:
+      return {
+        ...state,
+        userMessages: action.payload.userMessages
       };
     default:
       return state;

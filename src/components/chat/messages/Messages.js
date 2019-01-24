@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Segment, Comment, Icon } from 'semantic-ui-react';
 
 import firebase from '../../../firebase/firebase';
+import { setUserMessages } from '../../../actions/channel';
 
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
@@ -64,6 +66,9 @@ class Messages extends Component {
 
       // Sum active users in current channel
       this.countUniqueUsers(loadedMessages);
+
+      // Total number of messages sent by a user
+      this.countUserMessages(loadedMessages);
     });
   };
 
@@ -157,6 +162,28 @@ class Messages extends Component {
     const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
 
     this.setState({ numUniqueUsers });
+  };
+
+  countUserMessages = messages => {
+    const userMessages = messages.reduce((accumulator, message) => {
+      // Check if the accumulator already has the message owner's
+      // username in it
+      if (message.user.name in accumulator) {
+        // Increment count for that user
+        accumulator[message.user.name].count += 1;
+      } else {
+        // User does not already exist in accumulator
+        // Create object for user in accumulator
+        accumulator[message.user.name] = {
+          avatar: message.user.avatar,
+          count: 1
+        };
+      }
+
+      return accumulator;
+    }, {});
+
+    this.props.setUserMessages(userMessages);
   };
 
   handleSearchChange = e => {
@@ -289,4 +316,7 @@ class Messages extends Component {
   }
 }
 
-export default Messages;
+export default connect(
+  null,
+  { setUserMessages }
+)(Messages);
