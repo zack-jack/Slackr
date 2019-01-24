@@ -134,7 +134,9 @@ class Messages extends Component {
         .child(`${user.uid}/favorited`)
         .child(channel.id)
         .remove(err => {
-          console.log(err);
+          if (err !== null) {
+            console.log(err);
+          }
         });
     }
   };

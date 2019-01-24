@@ -13,7 +13,7 @@ class SidePanel extends Component {
     return (
       <Menu size="large" inverted fixed="left" vertical>
         <UserPanel currentUser={currentUser} />
-        <Favorites />
+        <Favorites currentUser={currentUser} />
         <Channels currentUser={currentUser} currentChannel={currentChannel} />
         <DirectMessages
           currentUser={currentUser}

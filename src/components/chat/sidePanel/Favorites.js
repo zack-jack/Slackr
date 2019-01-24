@@ -2,12 +2,81 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Menu, Icon } from 'semantic-ui-react';
 
+import firebase from '../../../firebase/firebase';
 import { setCurrentChannel, setPrivateChannel } from '../../../actions/channel';
 
 class Favorites extends Component {
   state = {
+    user: this.props.currentUser,
+    usersRef: firebase.database().ref('users'),
     activeChannel: '',
-    favoriteChannels: []
+    favoritedChannels: []
+  };
+
+  componentDidMount() {
+    const { user } = this.state;
+
+    // If current user exists
+    // pass user id to listeners
+    if (user) {
+      this.addListeners(user.uid);
+    }
+  }
+
+  componentWillUnmount() {
+    // Remove listeners
+    this.removeListeners();
+  }
+
+  addListeners = userId => {
+    const { usersRef } = this.state;
+
+    // Listen to current user favoriting channel
+    usersRef
+      .child(userId)
+      .child('favorited')
+      .on('child_added', snap => {
+        // Create a new object with the newly favorited channel
+        const favoritedChannel = { id: snap.key, ...snap.val() };
+
+        // Update state with new favorited channel
+        this.setState(
+          {
+            favoritedChannels: [
+              ...this.state.favoritedChannels,
+              favoritedChannel
+            ]
+          },
+          () => {
+            console.log(this.state.favoritedChannels);
+          }
+        );
+      });
+
+    // Listen to current user UNfavoriting channel
+    usersRef
+      .child(userId)
+      .child('favorited')
+      .on('child_removed', snap => {
+        const { favoritedChannels } = this.state;
+        // Create object with the data for the favorited channel to remove
+        const channelToRemove = { id: snap.key, ...snap.val() };
+
+        // Loop through favorite channels and filter out the channel to remove
+        const filteredChannels = favoritedChannels.filter(channel => {
+          return channel.id !== channelToRemove.id;
+        });
+
+        // Update state new array that filtered out removed channel
+        this.setState({
+          favoritedChannels: filteredChannels
+        });
+      });
+  };
+
+  removeListeners = () => {
+    // Stop listening to firebase changes to users ref
+    this.state.usersRef.off();
   };
 
   selectChannel = channel => {
@@ -25,9 +94,9 @@ class Favorites extends Component {
     this.setState({ activeChannel: channel.id });
   };
 
-  renderFavoriteChannels = favoriteChannels => {
-    if (favoriteChannels.length > 0) {
-      return favoriteChannels.map(channel => {
+  renderFavoritedChannels = favoritedChannels => {
+    if (favoritedChannels.length > 0) {
+      return favoritedChannels.map(channel => {
         return (
           <Menu.Item
             key={channel.id}
@@ -46,7 +115,7 @@ class Favorites extends Component {
   };
 
   render() {
-    const { favoriteChannels } = this.state;
+    const { favoritedChannels } = this.state;
 
     return (
       <Menu.Menu>
@@ -54,10 +123,10 @@ class Favorites extends Component {
           <span>
             <Icon name="star" /> Favorites
           </span>
-          ({favoriteChannels.length})
+          ({favoritedChannels.length})
         </Menu.Item>
 
-        {this.renderFavoriteChannels(favoriteChannels)}
+        {this.renderFavoritedChannels(favoritedChannels)}
       </Menu.Menu>
     );
   }
@@ -65,6 +134,5 @@ class Favorites extends Component {
 
 export default connect(
   null,
-  setCurrentChannel,
-  setPrivateChannel
+  { setCurrentChannel, setPrivateChannel }
 )(Favorites);
