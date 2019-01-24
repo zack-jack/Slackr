@@ -15,6 +15,8 @@ class Messages extends Component {
     isPrivateChannel: this.props.isPrivateChannel,
     privateMessagesRef: firebase.database().ref('privateMessages'),
     user: this.props.currentUser,
+    usersRef: firebase.database().ref('users'),
+    isChannelFavorited: false,
     messagesLoading: true,
     numUniqueUsers: '',
     searchTerm: '',
@@ -29,13 +31,19 @@ class Messages extends Component {
     // Check that the current channel and current user
     // exist in component state
     if (channel && user) {
-      // Pass current channel id to listener functions
-      this.addListeners(channel.id);
+      // Pass current channel id and current user id to listener functions
+      this.addListeners(channel.id, user.uid);
     }
   }
 
-  addListeners = channelId => {
+  componentWillUnmount() {
+    // Remove listeners
+    this.removeListeners();
+  }
+
+  addListeners = (channelId, userId) => {
     this.addMessageListener(channelId);
+    this.addUserFavoritesListener(channelId, userId);
   };
 
   addMessageListener = channelId => {
@@ -59,10 +67,76 @@ class Messages extends Component {
     });
   };
 
+  addUserFavoritesListener = (channelId, userId) => {
+    const { usersRef } = this.state;
+
+    usersRef
+      .child(userId)
+      .child('favorited')
+      .once('value')
+      .then(data => {
+        if (data.val() !== null) {
+          // Grab channel keys
+          const channelIds = Object.keys(data.val());
+
+          // Find the channel id in favorites
+          const prevFavorited = channelIds.includes(channelId);
+
+          // Set favorited state
+          this.setState({ isChannelFavorited: prevFavorited });
+        }
+      });
+  };
+
+  removeListeners = () => {
+    // Stop listening to firebase changes to messages ref
+    this.state.messagesRef.off();
+    this.state.privateMessagesRef.off();
+  };
+
   getMessagesRef = () => {
     const { messagesRef, privateMessagesRef, isPrivateChannel } = this.state;
 
     return isPrivateChannel ? privateMessagesRef : messagesRef;
+  };
+
+  handleFavorite = () => {
+    // Toggle channel favorited state
+    this.setState(
+      prevState => ({
+        isChannelFavorited: !prevState.isChannelFavorited
+      }),
+      () => {
+        this.favoriteChannel();
+      }
+    );
+  };
+
+  favoriteChannel = () => {
+    const { isChannelFavorited, channel, user, usersRef } = this.state;
+
+    if (isChannelFavorited) {
+      // Update firebase user with favorited channel object
+      usersRef.child(`${user.uid}/favorited`).update({
+        // Populate the favorite channel object
+        [channel.id]: {
+          name: channel.name,
+          details: channel.details,
+          createdBy: {
+            name: channel.createdBy.name,
+            avatar: channel.createdBy.avatar
+          }
+        }
+      });
+    } else {
+      // Update firebase user to remove favorited channel from database
+      usersRef
+        .child(`${user.uid}/favorited`)
+        .child(channel.id)
+        .remove(err => {
+          console.log(err);
+        });
+    }
   };
 
   countUniqueUsers = messages => {
@@ -171,6 +245,7 @@ class Messages extends Component {
       isPrivateChannel,
       user,
       numUniqueUsers,
+      isChannelFavorited,
       searchTerm,
       searchResults,
       searchLoading,
@@ -185,6 +260,8 @@ class Messages extends Component {
           numUniqueUsers={numUniqueUsers}
           handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
+          handleFavorite={this.handleFavorite}
+          isChannelFavorited={isChannelFavorited}
         />
 
         <Segment>
