@@ -18,6 +18,7 @@ class MessageForm extends Component {
     uploadTask: null,
     percentUploaded: 0,
     storageRef: firebase.storage().ref(),
+    typingRef: firebase.database().ref('typing'),
     errors: []
   };
 
@@ -32,6 +33,22 @@ class MessageForm extends Component {
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
+  };
+
+  handleKeyDown = () => {
+    const { message, channel, user, typingRef } = this.state;
+
+    if (message) {
+      typingRef
+        .child(channel.id)
+        .child(user.uid)
+        .set(user.displayName);
+    } else {
+      typingRef
+        .child(channel.id)
+        .child(user.uid)
+        .remove();
+    }
   };
 
   createMessage = (fileUrl = null) => {
@@ -59,7 +76,7 @@ class MessageForm extends Component {
 
   sendMessage = () => {
     const { getMessagesRef } = this.props;
-    const { message, channel } = this.state;
+    const { message, channel, user, typingRef } = this.state;
     const ref = getMessagesRef();
 
     if (message) {
@@ -73,6 +90,12 @@ class MessageForm extends Component {
         .then(() => {
           // Reset component state after it's sent to firebase
           this.setState({ isSending: false, message: '', errors: [] });
+
+          // Remove typing
+          typingRef
+            .child(channel.id)
+            .child(user.uid)
+            .remove();
         })
         .catch(err => {
           let error;
@@ -210,6 +233,7 @@ class MessageForm extends Component {
             }
             value={message}
             onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
           />
         </Form>
 

@@ -8,16 +8,20 @@ import { setUserMessages } from '../../../actions/channel';
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 import Message from './Message';
+import Typing from './Typing';
 
 class Messages extends Component {
   state = {
     messages: [],
-    messagesRef: firebase.database().ref('messages'),
+    user: this.props.currentUser,
     channel: this.props.currentChannel,
     isPrivateChannel: this.props.isPrivateChannel,
     privateMessagesRef: firebase.database().ref('privateMessages'),
-    user: this.props.currentUser,
+    messagesRef: firebase.database().ref('messages'),
     usersRef: firebase.database().ref('users'),
+    typingRef: firebase.database().ref('typing'),
+    connectedRef: firebase.database().ref('.info/connected'),
+    typingUsers: [],
     isChannelFavorited: false,
     messagesLoading: true,
     numUniqueUsers: '',
@@ -45,6 +49,7 @@ class Messages extends Component {
 
   addListeners = (channelId, userId) => {
     this.addMessageListener(channelId);
+    this.addTypingListener(channelId);
     this.addUserFavoritesListener(channelId, userId);
   };
 
@@ -69,6 +74,58 @@ class Messages extends Component {
 
       // Total number of messages sent by a user
       this.countUserMessages(loadedMessages);
+    });
+  };
+
+  addTypingListener = channelId => {
+    let typingUsers = [];
+
+    // Listen to typing ref for user typing added in this channel
+    this.state.typingRef.child(channelId).on('child_added', snap => {
+      // Exclude current user
+      if (snap.key !== this.state.user.uid) {
+        const typingUser = {
+          id: snap.key,
+          name: snap.val()
+        };
+
+        // Add user that is typing to typing users array
+        typingUsers = [...typingUsers, typingUser];
+
+        // Update typing users in state
+        this.setState({ typingUsers });
+      }
+    });
+
+    // Listen to typing ref for user stopped typing in this channel
+    this.state.typingRef.child(channelId).on('child_removed', snap => {
+      const i = typingUsers.findIndex(user => user.id === snap.key);
+
+      // Check that user was found
+      if (i !== -1) {
+        // Filter the typing users to make sure the user does not
+        // match the snap
+        typingUsers = typingUsers.filter(user => user.id !== snap.key);
+
+        // Update the state to remove the user who is no longer typing
+        this.setState({ typingUsers });
+      }
+    });
+
+    // Listen for connected
+    this.state.connectedRef.on('value', snap => {
+      if (snap.val() === true) {
+        // Listen for user disconnect
+        this.state.typingRef
+          .child(channelId)
+          .child(this.state.user.uid)
+          .onDisconnect()
+          .remove(err => {
+            if (err !== null) {
+              console.log(err);
+            }
+          });
+      }
     });
   };
 
@@ -242,7 +299,7 @@ class Messages extends Component {
     }
   };
 
-  displayCurrentChannelName = channel => {
+  renderCurrentChannelName = channel => {
     if (channel) {
       const { isPrivateChannel } = this.state;
 
@@ -266,6 +323,24 @@ class Messages extends Component {
     }
   };
 
+  renderTypingUsers = users => {
+    if (users.length > 0) {
+      return users.map(user => (
+        <div
+          key={user.id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '0.2rem'
+          }}
+        >
+          <span className="typing__user">{user.name} is typing...</span>{' '}
+          <Typing />
+        </div>
+      ));
+    }
+  };
+
   render() {
     const {
       messagesRef,
@@ -277,13 +352,14 @@ class Messages extends Component {
       searchTerm,
       searchResults,
       searchLoading,
-      progressBar
+      progressBar,
+      typingUsers
     } = this.state;
 
     return (
       <>
         <MessagesHeader
-          channelName={this.displayCurrentChannelName(channel)}
+          channelName={this.renderCurrentChannelName(channel)}
           isPrivateChannel={isPrivateChannel}
           numUniqueUsers={numUniqueUsers}
           handleSearchChange={this.handleSearchChange}
@@ -300,6 +376,7 @@ class Messages extends Component {
             {searchTerm
               ? this.renderMessages(searchResults)
               : this.renderMessages(this.state.messages)}
+            {this.renderTypingUsers(typingUsers)}
           </Comment.Group>
         </Segment>
 

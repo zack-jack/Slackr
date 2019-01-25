@@ -23,6 +23,7 @@ class Channels extends Component {
     channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
     messagesRef: firebase.database().ref('messages'),
+    typingRef: firebase.database().ref('typing'),
     notifications: [],
     modalOpen: false,
     initialLoad: true,
@@ -224,6 +225,12 @@ class Channels extends Component {
   selectChannel = channel => {
     // Set active state
     this.setActiveChannel(channel);
+
+    // Clear typing
+    this.state.typingRef
+      .child(this.state.channel.id)
+      .child(this.state.user.uid)
+      .remove();
 
     // Clear the notifications upon entering the channel
     this.clearNotifications();
