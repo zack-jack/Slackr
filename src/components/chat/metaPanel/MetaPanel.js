@@ -61,7 +61,11 @@ class MetaPanel extends Component {
     }
 
     return (
-      <Segment loading={!channel} className="meta-panel">
+      <Segment
+        loading={!channel}
+        className="meta-panel"
+        style={{ marginRight: '2rem' }}
+      >
         <Header as="h3" attached="top">
           About #{channel && channel.name}
         </Header>

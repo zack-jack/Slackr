@@ -8,7 +8,8 @@ import {
   Modal,
   Segment,
   Icon,
-  Label
+  Label,
+  Confirm
 } from 'semantic-ui-react';
 import { CirclePicker } from 'react-color';
 
@@ -18,6 +19,7 @@ import { setColors } from '../../../actions/colors';
 class ColorPanel extends Component {
   state = {
     isModalOpen: false,
+    isAlertOpen: false,
     primaryColor: '',
     secondaryColor: '',
     user: this.props.currentUser,
@@ -40,14 +42,7 @@ class ColorPanel extends Component {
     }
 
     // Initialize firebase with default colors
-    if (userColors) {
-      this.setState({
-        primaryColor: userColors.primaryColor,
-        secondaryColor: userColors.secondaryColor
-      });
-
-      this.handleSaveColors();
-    }
+    this.setDefaultColors();
   }
 
   addListeners = userId => {
@@ -71,6 +66,14 @@ class ColorPanel extends Component {
     this.setState({ isModalOpen: false });
   };
 
+  openAlert = () => {
+    this.setState({ isAlertOpen: true });
+  };
+
+  closeAlert = () => {
+    this.setState({ isAlertOpen: false });
+  };
+
   handleChangePrimary = color => {
     this.setState({ primaryColor: color.hex });
   };
@@ -79,32 +82,89 @@ class ColorPanel extends Component {
     this.setState({ secondaryColor: color.hex });
   };
 
-  handleSaveColors = () => {
-    const { primaryColor, secondaryColor } = this.state;
+  setDefaultColors = () => {
+    const { userColors } = this.state;
+    const primary = userColors[0].primaryColor;
+    const secondary = userColors[0].secondaryColor;
 
+    if (primary && secondary) {
+      this.setState({ primaryColor: primary, secondaryColor: secondary });
+
+      // Save default colors to firebase
+      this.saveColors(primary, secondary);
+    }
+  };
+
+  handleSaveColors = () => {
     // Check that values exist for both colors
-    if (primaryColor && secondaryColor) {
-      this.saveColors(primaryColor, secondaryColor);
+    if (this.state.primaryColor && this.state.secondaryColor) {
+      // Save to Firebase
+      this.saveColors(this.state.primaryColor, this.state.secondaryColor);
     }
   };
 
   saveColors = (primary, secondary) => {
     const { user, usersRef } = this.state;
 
-    // Update firebase database with the colors for the auth user
-    usersRef
-      .child(`${user.uid}/colors`)
-      .push()
-      .update({
-        primary,
-        secondary
-      })
-      .then(() => {
-        this.closeModal();
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    // Check if the color combination already exists
+    usersRef.child(`${user.uid}/colors`).once('value', snap => {
+      if (snap.exists()) {
+        const colors = snap.val();
+
+        // Converts to an array of objects
+        const colorSets = Object.values(colors);
+
+        // Check if any colorSets exist that match the current
+        const exists = colorSets.some(colorSet => {
+          return (
+            colorSet.primary === primary && colorSet.secondary === secondary
+          );
+        });
+
+        // If the color combination is not already saved in firebase
+        if (!exists) {
+          // Update firebase database with the colors for the auth user
+          usersRef
+            .child(`${user.uid}/colors`)
+            .push()
+            .update({
+              primary,
+              secondary
+            })
+            .then(() => {
+              this.closeModal();
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          const { userColors } = this.state;
+          const i = userColors.length - 1;
+
+          if (
+            primary !== userColors[i].primary &&
+            secondary !== userColors[i].secondary
+          )
+            this.openAlert();
+        }
+      } else {
+        // Default case when nothing else exists yet
+        // Update firebase database with the colors for the auth user
+        usersRef
+          .child(`${user.uid}/colors`)
+          .push()
+          .update({
+            primary,
+            secondary
+          })
+          .then(() => {
+            this.closeModal();
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   renderUserColors = colors => {
@@ -150,12 +210,11 @@ class ColorPanel extends Component {
         vertical
         visible
         width="very thin"
-        style={{ background: '#1e272e' }}
+        style={{ background: '#211a21' }}
         className="color-panel"
       >
         <Button icon="add" size="small" color="teal" onClick={this.openModal} />
         {this.renderUserColors(userColors)}
-
         <Modal open={isModalOpen} onClose={this.closeModal}>
           <Modal.Header>Choose App Color Theme</Modal.Header>
 
@@ -190,6 +249,13 @@ class ColorPanel extends Component {
             </Button>
           </Modal.Actions>
         </Modal>
+
+        <Confirm
+          content="This color combination has already been saved. Variety is the spice of life, so why not try something new?"
+          open={this.state.isAlertOpen}
+          onCancel={this.closeAlert}
+          onConfirm={this.closeAlert}
+        />
       </Sidebar>
     );
   }

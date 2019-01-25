@@ -11,9 +11,7 @@ const ProgressBar = ({ uploadState, percentUploaded }) => {
         inverted
         percent={percentUploaded}
         className="progress__bar"
-      >
-        <p>progress</p>
-      </Progress>
+      />
     );
   } else {
     return '';

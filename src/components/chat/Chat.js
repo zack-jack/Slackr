@@ -16,42 +16,46 @@ const Chat = ({
   secondaryColor
 }) => {
   return (
-    <Grid
-      columns="equal"
-      className="app"
-      style={{ background: secondaryColor }}
-    >
-      <Grid.Column width={3}>
-        <ColorPanel
-          key={currentUser && currentUser.name}
-          currentUser={currentUser}
-        />
-        <SidePanel
-          key={currentUser && currentUser.id}
-          currentUser={currentUser}
-          currentChannel={currentChannel}
-          primaryColor={primaryColor}
-        />
-      </Grid.Column>
+    <>
+      <ColorPanel
+        key={currentUser && currentUser.name}
+        currentUser={currentUser}
+      />
+      <SidePanel
+        key={currentUser && currentUser.id}
+        currentUser={currentUser}
+        currentChannel={currentChannel}
+        primaryColor={primaryColor}
+      />
 
-      <Grid.Column>
-        <Messages
-          key={currentChannel && currentChannel.id}
-          currentChannel={currentChannel}
-          currentUser={currentUser}
-          isPrivateChannel={isPrivateChannel}
-        />
-      </Grid.Column>
+      <Grid
+        columns="equal"
+        className="app"
+        style={{
+          background: secondaryColor,
+          marginLeft: '25rem',
+          paddingTop: 0
+        }}
+      >
+        <Grid.Column className="messages__container">
+          <Messages
+            key={currentChannel && currentChannel.id}
+            currentChannel={currentChannel}
+            currentUser={currentUser}
+            isPrivateChannel={isPrivateChannel}
+          />
+        </Grid.Column>
 
-      <Grid.Column width={4}>
-        <MetaPanel
-          key={currentChannel && currentChannel.name}
-          userMessages={userMessages}
-          currentChannel={currentChannel}
-          isPrivateChannel={isPrivateChannel}
-        />
-      </Grid.Column>
-    </Grid>
+        <Grid.Column width={4}>
+          <MetaPanel
+            key={currentChannel && currentChannel.name}
+            userMessages={userMessages}
+            currentChannel={currentChannel}
+            isPrivateChannel={isPrivateChannel}
+          />
+        </Grid.Column>
+      </Grid>
+    </>
   );
 };
 

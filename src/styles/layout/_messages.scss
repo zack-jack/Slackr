@@ -1,4 +1,10 @@
 .messages {
-  height: 70vh;
+  height: 75vh;
   overflow-y: scroll;
+
+  &__container {
+    margin-left: 25rem;
+    margin-right: 1.5rem;
+    position: relative;
+  }
 }

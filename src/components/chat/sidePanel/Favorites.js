@@ -40,17 +40,9 @@ class Favorites extends Component {
         const favoritedChannel = { id: snap.key, ...snap.val() };
 
         // Update state with new favorited channel
-        this.setState(
-          {
-            favoritedChannels: [
-              ...this.state.favoritedChannels,
-              favoritedChannel
-            ]
-          },
-          () => {
-            console.log(this.state.favoritedChannels);
-          }
-        );
+        this.setState({
+          favoritedChannels: [...this.state.favoritedChannels, favoritedChannel]
+        });
       });
 
     // Listen to current user UNfavoriting channel

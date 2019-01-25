@@ -269,7 +269,6 @@ class Messages extends Component {
   render() {
     const {
       messagesRef,
-      messages,
       channel,
       isPrivateChannel,
       user,
@@ -296,11 +295,11 @@ class Messages extends Component {
         <Segment>
           <Comment.Group
             style={{ maxWidth: '100%' }}
-            className={progressBar ? 'loading' : 'messages'}
+            className={progressBar ? 'loading messages' : 'messages'}
           >
             {searchTerm
               ? this.renderMessages(searchResults)
-              : this.renderMessages(messages)}
+              : this.renderMessages(this.state.messages)}
           </Comment.Group>
         </Segment>
 
