@@ -1,6 +1,7 @@
 .messages {
   height: 75vh;
   overflow-y: scroll;
+  position: relative;
 
   &__container {
     margin-left: 25rem;
