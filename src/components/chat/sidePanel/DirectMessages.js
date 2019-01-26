@@ -21,6 +21,10 @@ class DirectMessages extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
   addListeners = currentUserUid => {
     let loadedUsers = [];
 
@@ -77,6 +81,12 @@ class DirectMessages extends Component {
         this.addUserStatus(snap.key, false);
       }
     });
+  };
+
+  removeListeners = () => {
+    this.state.usersRef.off();
+    this.state.presenceRef.off();
+    this.state.connectedRef.off();
   };
 
   addUserStatus = (userId, connected = true) => {

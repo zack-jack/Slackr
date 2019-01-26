@@ -173,6 +173,12 @@ class Channels extends Component {
   removeListeners = () => {
     // Stop listening to firebase changes to channels ref
     this.state.channelsRef.off();
+
+    // Loop through channels array
+    this.state.channels.forEach(channel => {
+      // Remove message listeners for each channel child
+      this.state.messagesRef.child(channel.id).off();
+    });
   };
 
   addChannel = () => {

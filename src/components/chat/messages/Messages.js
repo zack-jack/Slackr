@@ -8,6 +8,7 @@ import { setUserMessages } from '../../../actions/channel';
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 import Message from './Message';
+import MessagesSpinner from '../../common/MessagesSpinner';
 import Typing from './Typing';
 
 class Messages extends Component {
@@ -28,29 +29,66 @@ class Messages extends Component {
     searchTerm: '',
     searchResults: [],
     searchLoading: false,
-    progressBar: false
+    progressBar: false,
+    listeners: []
   };
 
   componentDidMount() {
-    const { channel, user } = this.state;
+    const { channel, user, listeners } = this.state;
 
     // Check that the current channel and current user
     // exist in component state
     if (channel && user) {
+      this.removeListeners(listeners);
+
       // Pass current channel id and current user id to listener functions
       this.addListeners(channel.id, user.uid);
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    // Check if end of messages list
+    if (this.messagesEnd) {
+      this.scrollToBottom();
+    }
+  }
+
   componentWillUnmount() {
     // Remove listeners
-    this.removeListeners();
+    this.removeListeners(this.state.listeners);
+
+    // Remove connected ref listener
+    this.state.connectedRef.off();
   }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+  };
 
   addListeners = (channelId, userId) => {
     this.addMessageListener(channelId);
     this.addTypingListener(channelId);
     this.addUserFavoritesListener(channelId, userId);
+  };
+
+  removeListeners = listeners => {
+    listeners.forEach(listener => {
+      listener.ref.child(listener.id).off(listener.e);
+    });
+  };
+
+  addListenerToState = (id, ref, e) => {
+    // Check if the passed in values match a listener in state
+    const i = this.state.listeners.findIndex(listener => {
+      return listener.id === id && listener.ref === ref && listener.e === e;
+    });
+
+    // If not already in state
+    if (i === -1) {
+      const newListener = { id, ref, e };
+
+      this.setState({ listeners: [...this.state.listeners, newListener] });
+    }
   };
 
   addMessageListener = channelId => {
@@ -75,6 +113,8 @@ class Messages extends Component {
       // Total number of messages sent by a user
       this.countUserMessages(loadedMessages);
     });
+
+    this.addListenerToState(channelId, this.state.messagesRef, 'child_added');
   };
 
   addTypingListener = channelId => {
@@ -97,6 +137,8 @@ class Messages extends Component {
       }
     });
 
+    this.addListenerToState(channelId, this.state.typingRef, 'child_added');
+
     // Listen to typing ref for user stopped typing in this channel
     this.state.typingRef.child(channelId).on('child_removed', snap => {
       const i = typingUsers.findIndex(user => user.id === snap.key);
@@ -111,6 +153,8 @@ class Messages extends Component {
         this.setState({ typingUsers });
       }
     });
+
+    this.addListenerToState(channelId, this.state.typingRef, 'child_removed');
 
     // Listen for connected
     this.state.connectedRef.on('value', snap => {
@@ -344,6 +388,7 @@ class Messages extends Component {
   render() {
     const {
       messagesRef,
+      messagesLoading,
       channel,
       isPrivateChannel,
       user,
@@ -373,10 +418,12 @@ class Messages extends Component {
             style={{ maxWidth: '100%' }}
             className={progressBar ? 'loading messages' : 'messages'}
           >
+            {messagesLoading ? <MessagesSpinner /> : null}
             {searchTerm
               ? this.renderMessages(searchResults)
               : this.renderMessages(this.state.messages)}
             {this.renderTypingUsers(typingUsers)}
+            <div ref={node => (this.messagesEnd = node)} />
           </Comment.Group>
         </Segment>
 

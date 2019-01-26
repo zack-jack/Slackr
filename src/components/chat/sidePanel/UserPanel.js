@@ -93,7 +93,7 @@ class UserPanel extends Component {
 
     // Upload the blob and metadata to firebase ref
     storageRef
-      .child(`avatars/user-${userRef.id}`)
+      .child(`avatars/users/${userRef.id}`)
       .put(blob, metadata)
       .then(snap => {
         // Get image url from firebase storage

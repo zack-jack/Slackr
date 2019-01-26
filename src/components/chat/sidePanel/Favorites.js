@@ -68,7 +68,7 @@ class Favorites extends Component {
 
   removeListeners = () => {
     // Stop listening to firebase changes to users ref
-    this.state.usersRef.off();
+    this.state.usersRef.child(`${this.state.user.uid}/favorited`).off();
   };
 
   selectChannel = channel => {

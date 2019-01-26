@@ -45,6 +45,10 @@ class ColorPanel extends Component {
     this.setDefaultColors();
   }
 
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
   addListeners = userId => {
     let userColors = [];
     const { usersRef } = this.state;
@@ -56,6 +60,10 @@ class ColorPanel extends Component {
 
       this.setState({ userColors });
     });
+  };
+
+  removeListeners = () => {
+    this.state.usersRef.child(`${this.state.user.uid}/colors`).off();
   };
 
   openModal = () => {
