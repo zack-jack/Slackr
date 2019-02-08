@@ -33,7 +33,7 @@ class ColorPanel extends Component {
   };
 
   componentDidMount() {
-    const { user, userColors } = this.state;
+    const { user } = this.state;
 
     // Check that user obj is in state
     if (user) {
