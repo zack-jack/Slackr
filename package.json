@@ -4,10 +4,11 @@
   "private": true,
   "engines": {
     "npm": "6.4.1",
-    "node": "10.15.0"
+    "node": "11.1.0"
   },
   "dependencies": {
     "emoji-mart": "^2.9.2",
+    "express": "^4.16.4",
     "firebase": "^5.8.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
@@ -26,10 +27,12 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "heroku-prebuild": "npm install --production=false",
+    "heroku-postbuild": "npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
