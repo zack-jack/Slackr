@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import {
   Grid,
   Header,
@@ -44,6 +46,8 @@ class UserPanel extends Component {
       .auth()
       .signOut()
       .then(() => {
+        this.props.history.push('/');
+
         this.props.clearUser();
       });
   };
@@ -192,15 +196,13 @@ class UserPanel extends Component {
     ];
 
     return (
-      <Grid style={{ background: primaryColor }}>
+      <Grid style={{ background: primaryColor }} className="user-panel">
         <Grid.Column>
-          <Grid.Row style={{ padding: '1rem 0 1rem 1rem', margin: 0 }}>
-            <Header
-              inverted
-              floated="left"
-              as="h2"
-              style={{ marginBottom: '2rem' }}
-            >
+          <Grid.Row
+            style={{ padding: '1rem 0 1rem 1rem', margin: 0 }}
+            className="user-panel__heading"
+          >
+            <Header inverted as="h2" style={{ marginBottom: '2rem' }}>
               <Icon name="slack hash" />
               <Header.Content>Slackr</Header.Content>
             </Header>
@@ -210,6 +212,7 @@ class UserPanel extends Component {
                 trigger={trigger}
                 options={options}
                 onChange={this.onChange}
+                className="user-panel__dropdown"
               />
             </Header>
           </Grid.Row>
@@ -276,7 +279,10 @@ class UserPanel extends Component {
   }
 }
 
-export default connect(
-  null,
-  { setUser, clearUser }
+export default compose(
+  connect(
+    null,
+    { setUser, clearUser }
+  ),
+  withRouter
 )(UserPanel);

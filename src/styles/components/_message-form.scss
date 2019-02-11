@@ -1,0 +1,11 @@
+.message-form {
+  bottom: 0;
+  position: fixed;
+
+  &__buttons {
+    @include tablet {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+  }
+}

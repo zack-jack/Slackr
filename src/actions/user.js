@@ -11,6 +11,9 @@ export const setUser = user => {
 
 export const clearUser = () => {
   return {
-    type: CLEAR_USER
+    type: CLEAR_USER,
+    payload: {
+      currentUser: null
+    }
   };
 };

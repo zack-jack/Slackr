@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
 import ColorPanel from './colorPanel/ColorPanel';
+import MobilePanel from './mobilePanel/MobilePanel';
 import SidePanel from './sidePanel/SidePanel';
 import Messages from './messages/Messages';
 import MetaPanel from './metaPanel/MetaPanel';
@@ -21,11 +22,13 @@ const Chat = ({
         key={currentUser && currentUser.name}
         currentUser={currentUser}
       />
+      <MobilePanel primaryColor={primaryColor} />
       <SidePanel
         key={currentUser && currentUser.id}
         currentUser={currentUser}
         currentChannel={currentChannel}
         primaryColor={primaryColor}
+        className="side-panel"
       />
 
       <Grid
@@ -33,11 +36,10 @@ const Chat = ({
         className="app"
         style={{
           background: secondaryColor,
-          marginLeft: '25rem',
           paddingTop: 0
         }}
       >
-        <Grid.Column className="messages__container">
+        <Grid.Column tablet={13} computer={7} className="messages__container">
           <Messages
             key={currentChannel && currentChannel.id}
             currentChannel={currentChannel}
@@ -46,7 +48,7 @@ const Chat = ({
           />
         </Grid.Column>
 
-        <Grid.Column width={4}>
+        <Grid.Column computer={4}>
           <MetaPanel
             key={currentChannel && currentChannel.name}
             userMessages={userMessages}

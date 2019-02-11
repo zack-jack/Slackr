@@ -1,0 +1,53 @@
+.meta-panel {
+  height: 60vh;
+
+  @include desktop {
+    margin-right: 1rem !important;
+  }
+
+  @include tablet-large {
+    display: none;
+  }
+
+  &__channel {
+    @include laptop {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__accordion-section {
+    @include laptop {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+
+  &__accordion-heading {
+    @include laptop {
+      margin-bottom: 1rem;
+    }
+  }
+
+  &__dropdown-icon {
+    @include laptop {
+      width: 100% !important;
+    }
+  }
+
+  &__createdby {
+    align-items: center;
+    display: flex !important;
+  }
+
+  &__createdby-image {
+    height: 2.5rem !important;
+    margin-right: 0.5rem;
+    width: 2.5rem !important;
+
+    @include laptop {
+      height: 2rem !important;
+      width: 2rem !important;
+    }
+  }
+}

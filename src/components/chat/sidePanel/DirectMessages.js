@@ -99,7 +99,7 @@ class DirectMessages extends Component {
         user['status'] = `${connected ? 'online' : 'offline'}`;
       }
 
-      return accumulator.push(user);
+      return accumulator.concat(user);
     }, []);
 
     // Update state with updated users array
@@ -138,6 +138,20 @@ class DirectMessages extends Component {
     this.setState({ activeChannel: userId });
   };
 
+  renderUsers = (users, activeChannel) => {
+    return users.map(user => (
+      <Menu.Item
+        key={user.uid}
+        active={user.uid === activeChannel}
+        style={{ opacity: 0.6, fontStyle: 'italic' }}
+        onClick={() => this.changeChannel(user)}
+      >
+        <Icon name="circle" color={this.isUserOnline(user) ? 'green' : 'red'} />
+        @ {user.name}
+      </Menu.Item>
+    ));
+  };
+
   render() {
     const { users, activeChannel } = this.state;
 
@@ -150,20 +164,7 @@ class DirectMessages extends Component {
           </span>
           ({users.length})
         </Menu.Item>
-        {users.map(user => (
-          <Menu.Item
-            key={user.uid}
-            active={user.uid === activeChannel}
-            style={{ opacity: 0.6, fontStyle: 'italic' }}
-            onClick={() => this.changeChannel(user)}
-          >
-            <Icon
-              name="circle"
-              color={this.isUserOnline(user) ? 'green' : 'red'}
-            />
-            @ {user.name}
-          </Menu.Item>
-        ))}
+        {this.renderUsers(users, activeChannel)}
       </Menu.Menu>
     );
   }

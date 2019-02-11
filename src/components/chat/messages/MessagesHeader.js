@@ -14,8 +14,13 @@ class MessagesHeader extends Component {
     } = this.props;
 
     return (
-      <Segment clearing>
-        <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
+      <Segment clearing className="messages__header">
+        <Header
+          fluid="true"
+          as="h2"
+          floated="left"
+          className="messages__channel"
+        >
           <span>
             {channelName}
             {!isPrivateChannel && (
@@ -28,7 +33,9 @@ class MessagesHeader extends Component {
             )}
           </span>
 
-          <Header.Subheader>{numUniqueUsers}</Header.Subheader>
+          <Header.Subheader className="messages__subheader">
+            {numUniqueUsers}
+          </Header.Subheader>
         </Header>
 
         <Header floated="right">

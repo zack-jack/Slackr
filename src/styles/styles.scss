@@ -2,13 +2,19 @@
 ========================================== */
 @import './base/base';
 
+/* UTILITIES
+========================================== */
+@import './utils/breakpoints';
+
 /* LAYOUT STYLES
 ========================================== */
 @import './layout/app';
-@import './layout/color_panel';
-@import './layout/side_panel';
+@import './layout/color-panel';
+@import './layout/side-panel';
 @import './layout/messages';
-@import './layout/meta_panel';
+@import './layout/meta-panel';
+@import './layout/mobile-panel';
+@import './layout/user-panel';
 
 /* COMPONENT STYLES
 ========================================== */
@@ -16,5 +22,6 @@
 @import './components/emoji-picker';
 @import './components/menu';
 @import './components/message';
+@import './components/message-form';
 @import './components/progress';
 @import './components/typing';

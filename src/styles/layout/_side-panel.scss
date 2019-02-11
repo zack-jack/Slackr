@@ -1,0 +1,17 @@
+.side-panel {
+  font-size: 1.2rem;
+  overflow: hidden;
+  width: 18rem !important;
+
+  @include desktop {
+    width: 17rem !important;
+  }
+
+  @include laptop {
+    width: 16rem !important;
+  }
+
+  @include tablet {
+    display: none !important;
+  }
+}

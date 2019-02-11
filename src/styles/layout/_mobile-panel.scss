@@ -1,0 +1,19 @@
+.mobile-panel {
+  align-items: center;
+  display: flex !important;
+  overflow: hidden;
+  margin-left: 60px;
+  padding-top: 1rem;
+  width: 60px !important;
+
+  &__menu-button {
+    display: flex !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    width: 1.1rem;
+
+    & > i {
+      margin: 0 !important;
+    }
+  }
+}

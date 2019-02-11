@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import firebase from '../firebase/firebase';
 
-import Welcome from './Welcome';
 import Register from './auth/Register';
 import Login from './auth/Login';
 import Chat from './chat/Chat';
@@ -34,7 +33,7 @@ class App extends Component {
       <Spinner />
     ) : (
       <Switch>
-        <Route path="/" exact component={Welcome} />
+        <Route path="/" exact component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
         <Route path="/slackr" component={Chat} />

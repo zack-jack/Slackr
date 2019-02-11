@@ -269,7 +269,7 @@ class MessageForm extends Component {
     } = this.state;
 
     return (
-      <Segment className="message__form">
+      <Segment className="message-form">
         <Form style={{ marginBottom: '1rem' }} onSubmit={this.sendMessage}>
           {this.state.emojiPicker && (
             <Picker
@@ -306,13 +306,14 @@ class MessageForm extends Component {
           />
         </Form>
 
-        <Button.Group icon widths={2}>
+        <Button.Group icon className="message-form__buttons">
           <Button
             disabled={uploadState === 'uploading'}
             content="Upload Media"
             labelPosition="right"
             icon="image outline"
             onClick={this.openModal}
+            className="message-form__button"
           />
 
           <Button
@@ -322,6 +323,7 @@ class MessageForm extends Component {
             labelPosition="right"
             icon="edit"
             onClick={this.sendMessage}
+            className="message-form__button"
           />
         </Button.Group>
 

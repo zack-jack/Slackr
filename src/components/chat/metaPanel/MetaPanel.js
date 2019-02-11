@@ -66,8 +66,8 @@ class MetaPanel extends Component {
         className="meta-panel"
         style={{ marginRight: '2rem' }}
       >
-        <Header as="h3" attached="top">
-          About #{channel && channel.name}
+        <Header as="h3" attached="top" className="meta-panel__channel">
+          About <span>#{channel && channel.name}</span>
         </Header>
 
         <Accordion styled attached="true">
@@ -75,10 +75,13 @@ class MetaPanel extends Component {
             active={activeIndex === 0}
             index={0}
             onClick={this.setActiveIndex}
+            className="meta-panel__accordion-section"
           >
-            <Icon name="dropdown" />
-            <Icon name="info" />
-            Channel Details
+            <Icon name="dropdown" className="meta-panel__dropdown-icon" />
+            <span className="meta-panel__accordion-heading">
+              <Icon name="info" />
+              Channel Details
+            </span>
           </Accordion.Title>
 
           <Accordion.Content active={activeIndex === 0}>
@@ -89,10 +92,13 @@ class MetaPanel extends Component {
             active={activeIndex === 1}
             index={1}
             onClick={this.setActiveIndex}
+            className="meta-panel__accordion-section"
           >
-            <Icon name="dropdown" />
-            <Icon name="user circle" />
-            Top Users
+            <Icon name="dropdown" className="meta-panel__dropdown-icon" />
+            <span className="meta-panel__accordion-heading">
+              <Icon name="user circle" />
+              Top Users
+            </span>
           </Accordion.Title>
 
           <Accordion.Content active={activeIndex === 1}>
@@ -103,17 +109,25 @@ class MetaPanel extends Component {
             active={activeIndex === 2}
             index={2}
             onClick={this.setActiveIndex}
+            className="meta-panel__accordion-section"
           >
-            <Icon name="dropdown" />
-            <Icon name="pencil" />
-            Created By
+            <Icon name="dropdown" className="meta-panel__dropdown-icon" />
+            <span className="meta-panel__accordion-heading">
+              <Icon name="pencil" />
+              Created By
+            </span>
           </Accordion.Title>
 
-          <Accordion.Content active={activeIndex === 2}>
-            <Header as="h3">
-              <Image circular src={channel && channel.createdBy.avatar} />
-              {channel && channel.createdBy.name}
-            </Header>
+          <Accordion.Content
+            active={activeIndex === 2}
+            className="meta-panel__createdby"
+          >
+            <Image
+              circular
+              src={channel && channel.createdBy.avatar}
+              className="meta-panel__createdby-image"
+            />
+            {channel && channel.createdBy.name}
           </Accordion.Content>
         </Accordion>
       </Segment>
