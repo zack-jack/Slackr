@@ -3,12 +3,14 @@
 Slack clone.
 Real time collaboration app built with React and Firebase.
 
-To try out this app locally, clone the repository and run the following commands from the project directory:
+Click [here](https://slackr-react.herokuapp.com) to view a live demo.
 
-### npm install
+Demo accounts have been setup and are available for quick use of the app.
 
-Downloads all project dependencies locally.
+Demo User 1:
+email: demouser1@demo.com
+password: password
 
-### npm run start
-
-Starts up the react app hosted on localhost port 3000.
+Demo User 2:
+email: demouser2@demo.com
+password: password
