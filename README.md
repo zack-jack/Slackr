@@ -1,7 +1,9 @@
-## Slackr
+# Slackr
 
 Slack clone.
 Real time collaboration app built with React and Firebase.
+
+## Live Demo
 
 Click [here](https://slackr-react.herokuapp.com) to view a live demo.
 
