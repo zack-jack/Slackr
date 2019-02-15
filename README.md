@@ -11,4 +11,4 @@ Downloads all project dependencies locally.
 
 ### npm run start
 
-Starts up the react app hosted on localhost port 5000.
+Starts up the react app hosted on localhost port 3000.
